@@ -4,7 +4,7 @@ openai>=1.2
 duckduckgo-search
 anthropic>=0.3.0
 trubrics>=1.4.3
-aisuite[all]
+litellm
 streamlit-feedback
 langchain-community
 google-genai
