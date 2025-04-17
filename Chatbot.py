@@ -18,7 +18,14 @@ if active_provider:
     provider = active_provider
     provider_name = active_provider.get_name()
 
-UIManager.render_header()
+# Check if the user has entered any text by checking if there are any user messages
+show_header = True
+if 'messages' in st.session_state:
+    # If there are any user messages in the conversation, hide the header
+    if any(message['role'] == 'user' for message in st.session_state.messages):
+        show_header = False
+
+UIManager.render_header(show_header)
 
 if not provider:
     st.warning("No API credentials found in configuration. Please enter your credentials:")
@@ -55,3 +62,4 @@ if prompt := st.chat_input(placeholder="Ask me anything..."):
     full_response = UIManager.stream_response(provider, messages)
     
     ConversationManager.add_message("assistant", full_response)
+

@@ -83,7 +83,17 @@ class UIManager:
                 ConversationManager.clear_all_conversations()
                 st.rerun()
         
-        st.sidebar.markdown("""<hr style="margin-top:10px;margin-bottom:10px;border:1px solid #ccc;" />""", unsafe_allow_html=True)
+        st.sidebar.markdown(
+            """
+            <style>
+            .st-emotion-cache-r90ti5 {
+                background-color: #f9f9f9;
+            }
+            </style>
+            <hr style="margin-top:10px;margin-bottom:10px;border:1px solid #ccc;" />
+            """,
+            unsafe_allow_html=True
+        )
         
         # Display conversation history
         if len(st.session_state["conversation_history"]) > 0:
@@ -107,26 +117,28 @@ class UIManager:
             st.sidebar.text("Không có lịch sử trò chuyện")
 
     @staticmethod
-    def render_header():
+    def render_header(show=True):
         """Render the app header with provider information."""
-        st.title("💬 HealthCare Chatbot")
-        st.caption(f"🚀 A Streamlit chatbot powered by BookingCare")
+        if show:
+            st.title("💬 HealthCare Chatbot")
+            st.caption(f"🚀 A Streamlit chatbot powered by BookingCare")
 
     @staticmethod
     def custom_chat_message(role: str, content: str):
-        """Display a chat message without logo icon for both user and assistant messages."""
-        
+        """Display a chat message without logo icon for both user and assistant messages."""        
         if role == "user":
             # For user messages, display on the right side
-            cols = st.columns([0.7, 0.3])
+            cols = st.columns([0.4, 0.6])
             
             # Content in the right column with right alignment
             with cols[1]:
                 st.markdown(f"""
-                <div style="background-color: #f0f2f6; padding: 10px; border-radius: 30px; margin-bottom: 10px; text-align: right; display: inline-block; float: right; max-width: 80%;">
-                    <p style="margin: 0;  font-size: 16px; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;">{content}</p>
+                <div style="text-align: right; margin-bottom: 10px; width: 100%;">
+                    <div style="background-color: #f0f2f6; padding: 10px; border-radius: 30px; display: inline-block; max-width: 80%; text-align: left; float: right; word-wrap: break-word; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80%;">
+                        <p style="margin: 0; font-size: 16px; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif; white-space: normal;">{content}</p>
+                    </div>
+                    <div style="clear: both;"></div>
                 </div>
-                <div style="clear: both;"></div>
                 """, unsafe_allow_html=True)
         else:
             # For assistant messages, use full width with left alignment
