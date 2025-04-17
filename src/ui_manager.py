@@ -15,15 +15,57 @@ class UIManager:
         """Apply custom font styling for the entire app."""
         st.markdown("""
         <style>
-            html, body, [class*="css"] {
-                font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol' !important;
+            body, .st-b7, stMain, stMarkdownContainer, .st-emotion-cache-p7i6r9, .st-emotion-cache-16tyu1 h2, .st-emotion-cache-16tyu1 h3, .st-emotion-cache-16tyu1 h4, .st-emotion-cache-16tyu1 h5, .st-emotion-cache-16tyu1 h6, .st-emotion-cache-vjzpa, 
+            .st-emotion-cache-102y9h7 h1, .st-emotion-cache-102y9h7 h2, .st-emotion-cache-102y9h7 h3, .st-emotion-cache-102y9h7 h4, .st-emotion-cache-102y9h7 h5, .st-emotion-cache-102y9h7 h6  {
+                font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol' !important;        
             }
+            /* Custom button styling */
             div[data-testid="stButton"] button[kind="secondary"] {
                 border: none;
                 background-color: transparent;
-                color: #FF4B4B;
+                color: #45c3d2;
                 padding: 0;
                 text-align: center;
+            }
+            div[data-testid="stButton"] button[kind="primary"] {
+                border: 1px solid #45c3d2;
+                border-radius: 30px;
+                background-color: #45c3d2;
+                color: #ffffff;
+                padding: 0;
+                text-align: center;
+            }
+            
+            /* Force exact 768px width with no adjustments */
+            .main .block-container, 
+            [data-testid="stAppViewContainer"] .main .block-container,
+            [data-testid="stVerticalBlock"],
+            div.appview-container .main .block-container,
+            div[data-testid="stDecoration"],
+            div[data-testid="stVehtml, body, [class*="css"] {
+                font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol' !important;
+            }rticalBlock"] {
+                width: 768px !important;
+                max-width: 768px !important;
+                min-width: 768px !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* Remove any default padding that might reduce effective width */
+            [data-testid="stAppViewContainer"] {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+            
+            /* Make sure content inside block container takes full width */
+            .stMarkdown, .stText, div[data-testid="element-container"] {
+                width: 768px !important;
+                max-width: 768px !important;
+                box-sizing: border-box !important;
             }
         </style>
         """, unsafe_allow_html=True)
@@ -82,7 +124,7 @@ class UIManager:
             with cols[1]:
                 st.markdown(f"""
                 <div style="background-color: #f0f2f6; padding: 10px; border-radius: 30px; margin-bottom: 10px; text-align: right; display: inline-block; float: right; max-width: 80%;">
-                    <p style="margin: 0;">{content}</p>
+                    <p style="margin: 0;  font-size: 16px; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;">{content}</p>
                 </div>
                 <div style="clear: both;"></div>
                 """, unsafe_allow_html=True)
@@ -90,7 +132,7 @@ class UIManager:
             # For assistant messages, use full width with left alignment
             st.markdown(f"""
             <div style="padding: 10px; border-radius: 10px; margin-bottom: 10px;">
-                <p style="margin: 0;">{content}</p>
+                <p style="margin: 0;  font-size: 16px; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;"">{content}</p>
             </div>
             """, unsafe_allow_html=True)
 

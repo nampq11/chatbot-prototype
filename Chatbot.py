@@ -38,7 +38,7 @@ with st.sidebar:
 
 UIManager.render_chat_messages()
 
-if prompt := st.chat_input():
+if prompt := st.chat_input(placeholder="Ask me anything..."):
     if not provider:
         st.error("No AI provider configured. Please check your configuration or enter API credentials in the sidebar.")
         st.stop()
