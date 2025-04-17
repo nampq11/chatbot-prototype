@@ -181,7 +181,7 @@ with st.sidebar:
         st.title("Lịch sử")
     
     with col2:
-        if st.button("Xóa tất cả", key="remove_all"):
+        if st.button("Xóa tất cả", key="remove_all", use_container_width=True, type="secondary"):
         # Create a new conversation
             new_id = str(uuid.uuid4())
             # Clear conversation history
@@ -195,6 +195,8 @@ with st.sidebar:
             st.session_state["current_conversation_id"] = new_id
             st.session_state["messages"] = st.session_state["conversation_history"][new_id]["messages"]
             st.rerun()
+
+    st.sidebar.markdown("""<hr style="margin-top:10px;margin-bottom:10px;border:1px solid #ccc;" />""", unsafe_allow_html=True)
 
     # Check if there are any conversations to display
     if len(st.session_state["conversation_history"]) > 0:
@@ -213,7 +215,7 @@ with st.sidebar:
                 st.rerun()
             
             # Add delete button for individual conversations
-            if col2.button("🗑️", key=f"delete_{conv_id}"):
+            if col2.button(icon=":material/close:", label="", key=f"delete_{conv_id}"):
                 # Delete this conversation
                 del st.session_state["conversation_history"][conv_id]
                 
