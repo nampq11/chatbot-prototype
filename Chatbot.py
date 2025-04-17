@@ -17,9 +17,8 @@ active_provider = ProviderFactory.get_configured_provider()
 if active_provider:
     provider = active_provider
     provider_name = active_provider.get_name()
-    st.success(f"✅ Using {provider_name} service")
 
-UIManager.render_header(provider_name)
+UIManager.render_header()
 
 if not provider:
     st.warning("No API credentials found in configuration. Please enter your credentials:")
@@ -49,7 +48,8 @@ if prompt := st.chat_input():
         st.stop()
 
     ConversationManager.add_message("user", prompt)
-    st.chat_message("user").write(prompt)
+    # Use custom chat message instead of the default st.chat_message
+    UIManager.custom_chat_message("user", prompt)
     
     messages = ConversationManager.get_current_messages()
     full_response = UIManager.stream_response(provider, messages)

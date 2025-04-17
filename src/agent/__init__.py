@@ -1,9 +1,8 @@
-from .provider_base import AIProvider, ChatMessage
-from .openai_provider import OpenAIProvider
-from .azure_provider import AzureOpenAIProvider
-from .gemini_provider import GeminiProvider
 from typing import Dict, List, Optional, Type
-
+from src.agent.provider.azure_provider import AzureOpenAIProvider
+from src.agent.provider.gemini_provider import GeminiProvider
+from src.agent.provider.openai_provider import OpenAIProvider
+from src.agent.provider.provider_base import AIProvider
 
 class ProviderFactory:
     """Factory class to create and manage AI providers."""

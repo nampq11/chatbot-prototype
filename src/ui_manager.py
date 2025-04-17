@@ -1,9 +1,10 @@
 import streamlit as st
 from typing import Callable, List, Dict, Optional
-from src.agent.provider_base import AIProvider
+from src.agent.provider.provider_base import AIProvider
 from src.agent import ProviderFactory
 from src.agent.conversation_manager import ConversationManager
 from src.config import Config
+import os
 
 
 class UIManager:
@@ -64,19 +65,40 @@ class UIManager:
             st.sidebar.text("Không có lịch sử trò chuyện")
 
     @staticmethod
-    def render_header(provider: Optional[str] = None):
+    def render_header():
         """Render the app header with provider information."""
-        st.title("💬 Chatbot")
-        if provider:
-            st.caption(f"🚀 A Streamlit chatbot powered by {provider}")
+        st.title("💬 HealthCare Chatbot")
+        st.caption(f"🚀 A Streamlit chatbot powered by BookingCare")
+
+    @staticmethod
+    def custom_chat_message(role: str, content: str):
+        """Display a chat message without logo icon for both user and assistant messages."""
+        
+        if role == "user":
+            # For user messages, display on the right side
+            cols = st.columns([0.7, 0.3])
+            
+            # Content in the right column with right alignment
+            with cols[1]:
+                st.markdown(f"""
+                <div style="background-color: #f0f2f6; padding: 10px; border-radius: 30px; margin-bottom: 10px; text-align: right; display: inline-block; float: right; max-width: 80%;">
+                    <p style="margin: 0;">{content}</p>
+                </div>
+                <div style="clear: both;"></div>
+                """, unsafe_allow_html=True)
         else:
-            st.caption("🚀 A Streamlit chatbot")
+            # For assistant messages, use full width with left alignment
+            st.markdown(f"""
+            <div style="padding: 10px; border-radius: 10px; margin-bottom: 10px;">
+                <p style="margin: 0;">{content}</p>
+            </div>
+            """, unsafe_allow_html=True)
 
     @staticmethod
     def render_chat_messages():
-        """Render current conversation messages."""
+        """Render current conversation messages with custom icons."""
         for msg in st.session_state.messages:
-            st.chat_message(msg["role"]).write(msg["content"])
+            UIManager.custom_chat_message(msg["role"], msg["content"])
 
     @staticmethod
     def render_provider_selection():
@@ -190,18 +212,25 @@ class UIManager:
     @staticmethod
     def stream_response(provider: AIProvider, messages: List[Dict[str, str]]) -> str:
         """Stream AI response with a placeholder."""
-        assistant_response_placeholder = st.chat_message("assistant").empty()
+        # Create a placeholder for the assistant's response using the custom message method
+        # But first create an empty element to use as a placeholder
+        response_placeholder = st.empty()
         full_response = ""
         
         try:
             for content_chunk in provider.generate_response(messages):
                 full_response += content_chunk
-                assistant_response_placeholder.markdown(full_response + "▌")
+                # Update the placeholder with the growing response
+                with response_placeholder.container():
+                    UIManager.custom_chat_message("assistant", full_response + "▌")
             
-            assistant_response_placeholder.markdown(full_response)
+            # Final update without cursor
+            with response_placeholder.container():
+                UIManager.custom_chat_message("assistant", full_response)
         except Exception as e:
             error_message = f"Error generating response: {str(e)}"
-            assistant_response_placeholder.markdown(error_message)
+            with response_placeholder.container():
+                UIManager.custom_chat_message("assistant", error_message)
             full_response = error_message
             
         return full_response

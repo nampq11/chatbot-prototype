@@ -2,7 +2,7 @@ import streamlit as st
 from typing import Dict, Iterator, List
 from google import genai
 
-from src.agent.provider_base import AIProvider
+from src.agent.provider.provider_base import AIProvider
 
 
 class GeminiProvider(AIProvider):
