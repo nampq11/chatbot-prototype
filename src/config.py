@@ -1,6 +1,8 @@
 from typing import Optional, Any
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 import streamlit as st
+
 
 class InputArgs(BaseModel):
     AZURE_API_KEY: str
@@ -11,6 +13,13 @@ class InputArgs(BaseModel):
 
 class Config(BaseModel):
     args: Optional[Any] = None
+    MONGO_URI: str = Field(
+        default="mongodb+srv://nampham11062002:Phamnamaq123@@cluster0.t13jleh.mongodb.net/?appName=Cluster0"
+    )
+    MONGO_DB_NAME: str = "bkcare"
+    MONGO_STATE_CHECKPOINT_COLLECTION: str = "bkcare_state_checkpoints"
+    MONGO_STATE_WRITES_COLLECTION: str = "bkcare_state_writes"
+    MONGO_LONG_TERM_MEMORY_COLLECTION: str = "bkcare_long_term_memory"
     
     def init(self, args):
         self.args = args

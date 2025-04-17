@@ -4,20 +4,32 @@ from google import genai
 from src.config import Config
 import os
 import uuid
+from collections import OrderedDict
+import time
+
+# Apply custom font styling for the entire app
+st.markdown("""
+<style>
+    html, body, [class*="css"] {
+        font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol' !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 config = Config()
 
 # Initialize session state for conversations if it doesn't exist
 if "conversation_history" not in st.session_state:
-    st.session_state["conversation_history"] = {}  # Dictionary to store conversations
-
-if "current_conversation_id" not in st.session_state:
+    st.session_state["conversation_history"] = OrderedDict()  # Use OrderedDict instead of dict
+    
     # Generate a unique ID for the initial conversation
     new_id = str(uuid.uuid4())
     st.session_state["current_conversation_id"] = new_id
+    # Add timestamp for sorting
     st.session_state["conversation_history"][new_id] = {
-        "title": "New Conversation",
-        "messages": [{"role": "assistant", "content": "How can I help you?"}]
+        "title": "Cuộc trò chuyện mới",
+        "messages": [{"role": "assistant", "content": "Tôi có thể giúp gì cho bạn?"}],
+        "created_at": time.time()
     }
 
 # Initialize messages for the current conversation if needed
@@ -152,7 +164,7 @@ st.caption(f"🚀 A Streamlit chatbot powered by {provider}")
 
 # Sidebar for conversation management
 with st.sidebar:
-        # Apply CSS to hide button border
+    # Apply CSS to hide button border
     st.markdown("""
     <style>
     div[data-testid="stButton"] button[kind="secondary"] {
@@ -167,10 +179,25 @@ with st.sidebar:
 
     if st.button(icon=":material/add_circle:",label="Cuộc trò chuyện mới", key="new_conversation", use_container_width=True, type="primary"):
         new_id = str(uuid.uuid4())
-        st.session_state["conversation_history"][new_id] = {
-        "title": "Cuộc trò chuyện mới",
-        "messages": [{"role": "assistant", "content": "Tôi có thể giúp gì cho bạn?"}]
+        
+        # Create a new ordered dictionary with the new conversation first
+        new_history = OrderedDict()
+        
+        # Add the new conversation first
+        new_history[new_id] = {
+            "title": "Cuộc trò chuyện mới",
+            "messages": [{"role": "assistant", "content": "Tôi có thể giúp gì cho bạn?"}],
+            "created_at": time.time()
         }
+        
+        # Add all existing conversations
+        for conv_id, conv_data in st.session_state["conversation_history"].items():
+            new_history[conv_id] = conv_data
+            
+        # Update the conversation history with the new ordered dictionary
+        st.session_state["conversation_history"] = new_history
+        
+        # Set as current conversation
         st.session_state["current_conversation_id"] = new_id
         st.session_state["messages"] = st.session_state["conversation_history"][new_id]["messages"]
         st.rerun()
@@ -182,15 +209,16 @@ with st.sidebar:
     
     with col2:
         if st.button("Xóa tất cả", key="remove_all", use_container_width=True, type="secondary"):
-        # Create a new conversation
+            # Create a new conversation
             new_id = str(uuid.uuid4())
-            # Clear conversation history
-            st.session_state["conversation_history"] = {
-                new_id: {
+            # Clear conversation history and create a new ordered dictionary with just the new conversation
+            st.session_state["conversation_history"] = OrderedDict([
+                (new_id, {
                     "title": "Cuộc trò chuyện mới",
-                    "messages": [{"role": "assistant", "content": "Tôi có thể giúp gì cho bạn?"}]
-                }
-            }
+                    "messages": [{"role": "assistant", "content": "Tôi có thể giúp gì cho bạn?"}],
+                    "created_at": time.time()
+                })
+            ])
             # Set as current conversation
             st.session_state["current_conversation_id"] = new_id
             st.session_state["messages"] = st.session_state["conversation_history"][new_id]["messages"]
@@ -198,11 +226,10 @@ with st.sidebar:
 
     st.sidebar.markdown("""<hr style="margin-top:10px;margin-bottom:10px;border:1px solid #ccc;" />""", unsafe_allow_html=True)
 
-    # Check if there are any conversations to display
+    # Display conversation history
     if len(st.session_state["conversation_history"]) > 0:
-        # Sort conversations by recency (if you want to add timestamps later)
+        # Display conversations in the order they appear in the OrderedDict (newest first)
         for conv_id, conv_data in st.session_state["conversation_history"].items():
-            # Get the title or first few words of first user message as the title
             title = conv_data["title"]
             
             # Create columns for the conversation title and delete button
@@ -229,18 +256,18 @@ with st.sidebar:
                     else:
                         # Create a new conversation if none left
                         new_id = str(uuid.uuid4())
-                        st.session_state["conversation_history"][new_id] = {
-                            "title": "Cuộc trò chuyện mới",
-                            "messages": [{"role": "assistant", "content": "Tôi có thể giúp gì cho bạn?"}]
-                        }
+                        st.session_state["conversation_history"] = OrderedDict([
+                            (new_id, {
+                                "title": "Cuộc trò chuyện mới",
+                                "messages": [{"role": "assistant", "content": "Tôi có thể giúp gì cho bạn?"}],
+                                "created_at": time.time()
+                            })
+                        ])
                         st.session_state["current_conversation_id"] = new_id
                         st.session_state["messages"] = st.session_state["conversation_history"][new_id]["messages"]
                 st.rerun()
     else:
         st.sidebar.text("Không có lịch sử trò chuyện")
-    
-    # Remove all conversations button
-
 
 # Display current conversation
 for msg in st.session_state.messages:
