@@ -15,13 +15,7 @@ class UIManager:
     def apply_custom_styles():
         """Apply custom font styling for the entire app."""
         load_css("static/style.css")
-        # Keep minimal inline styles for any dynamic styles
-        st.markdown("""
-        <style>
-            /* Any additional dynamic styles can go here */
-        </style>
-        """, unsafe_allow_html=True)
-
+        
     @staticmethod
     def render_sidebar():
         """Render the sidebar with conversation management controls."""
@@ -72,8 +66,31 @@ class UIManager:
     def render_header(show=True):
         """Render the app header with provider information."""
         if show:
-            st.title("💬 HealthCare Chatbot")
-            st.caption(f"🚀 A Streamlit chatbot powered by BookingCare")
+            # Center the logo and caption
+            st.markdown("""
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%; width: 100%;">
+                <img src="data:image/svg+xml;base64,{}" width="200" style="margin: 0 auto;">
+                <h1 style="text-align: center; margin-top: 10px; margin: 0 auto; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif; color: rgb(0 0 0/1);">
+                    BookingCare AI Chatbot
+                </h1>   
+                <p style="text-align: center; margin-top: 10px; margin: 0 auto; font-size: 14px; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif; white-space: normal; max-width: 80%; color:rgb(107 114 128/1);">
+                    An AI version of BookingCare. Trained on BookingCare's articles, documentation, data sources. 
+                    Note: Even with alot of training data, the bot may still halluciation, don't trust everything it says. 
+                    All chats are recorded, please don't share your deep secret to the bot!
+                </p>
+            </div>
+            """.format(UIManager._get_base64_encoded_logo()), unsafe_allow_html=True)
+
+    @staticmethod
+    def _get_base64_encoded_logo():
+        """Read the SVG logo file and return its base64-encoded content."""
+        import base64
+        try:
+            with open("static/bookingcare_logo.svg", "rb") as f:
+                return base64.b64encode(f.read()).decode("utf-8")
+        except Exception as e:
+            st.error(f"Error loading logo: {str(e)}")
+            return ""
 
     @staticmethod
     def custom_chat_message(role: str, content: str):
@@ -87,20 +104,25 @@ class UIManager:
                 st.markdown(f"""
                 <div style="text-align: right; margin-bottom: 10px; width: 100%;">
                     <div style="background-color: #f0f2f6; padding: 10px; border-radius: 30px; display: inline-block; max-width: 80%; text-align: left; float: right; word-wrap: break-word; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80%;">
-                        <p style="margin: 0; font-size: 16px; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif; white-space: normal;">{content}</p>
+                        <div style="margin: 0; font-size: 16px; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif; white-space: normal;">{content}</div>
                     </div>
                     <div style="clear: both;"></div>
                 </div>
                 """, unsafe_allow_html=True)
         else:
-            # For assistant messages, use full width with left alignment and support markdown
-            # Directly insert the content which will be interpreted as HTML including links
-            print(content)            
-            st.markdown(f"""
-            <div style="padding: 10px; border-radius: 10px; margin-bottom: 10px;">
-                <div style="margin: 0; font-size: 16px; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;">{md.markdown(content)}</div>
-            </div>
-            """, unsafe_allow_html=True)
+            # For assistant messages, create a container to better handle markdown content
+            container = st.container()
+            with container:
+                # Display the assistant's message with proper markdown formatting
+                st.markdown(f"""
+                <div style="padding: 10px; border-radius: 10px; margin-bottom: 10px;">
+                    <div style="margin: 0; font-size: 16px; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;">
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                # Use Streamlit's native markdown rendering for the content
+                # This ensures code blocks are properly formatted with syntax highlighting
+                st.markdown(content)
 
     @staticmethod
     def render_chat_messages():
@@ -219,10 +241,26 @@ class UIManager:
     
     @staticmethod
     def stream_response(provider: AIProvider, messages: List[Dict[str, str]]) -> str:
-        """Stream AI response with a placeholder."""
-        # Create a placeholder for the assistant's response using the custom message method
-        # But first create an empty element to use as a placeholder
+        """Stream AI response with a typing animation."""
+        # Create a placeholder for the assistant's response
         response_placeholder = st.empty()
+        
+        # Show typing animation
+        with response_placeholder.container():
+            st.markdown("""
+            <div style="padding: 10px; border-radius: 10px; margin-bottom: 10px;">
+                <div class="typing-animation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+        # Short pause to show the animation (optional)
+        import time
+        time.sleep(0.5)
+        
         full_response = ""
         
         try:

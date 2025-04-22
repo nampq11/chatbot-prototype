@@ -45,16 +45,6 @@ with st.sidebar:
 
 UIManager.render_chat_messages()
 
-st.markdown("""
-    <style> 
-    .stChatInput, .st-emotion-cache-1eeryuo, .e1togvvn0" {
-        background-color: #fff;
-        height: 100px;
-    }
-    </style>
-    """, unsafe_allow_html=True
-)
-
 if prompt := st.chat_input(placeholder="Ask me anything"):
     
     if not provider:

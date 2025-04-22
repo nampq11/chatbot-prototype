@@ -1,7 +1,7 @@
 /* Custom styles for HealthCare Chatbot */
 
 /* Base font styling */
-body, .st-b7, stMain, stMarkdownContainer, .st-emotion-cache-p7i6r9, .st-emotion-cache-vjzpa, 
+body, .st-b7, stMain, stMarkdownContainer, .st-emotion-cache-p7i6r9, .st-emotion-cache-vjzpa, .st-emotion-cache-16tyu1, 
 .st-emotion-cache-102y9h7 h1, .st-emotion-cache-102y9h7 h2, .st-emotion-cache-102y9h7 h3, 
 .st-emotion-cache-102y9h7 h4, .st-emotion-cache-102y9h7 h5, .st-emotion-cache-102y9h7 h6 {
     font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol' !important;        
@@ -23,6 +23,41 @@ div[data-testid="stButton"] button[kind="primary"] {
     color: #ffffff;
     padding: 0;
     text-align: center;
+}
+
+/* Typing animation styles */
+.typing-animation {
+    display: inline-block;
+    padding: 15px;
+    border-radius: 20px;
+    background-color: rgba(69, 195, 210, 0.1);
+}
+
+.typing-animation span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #45c3d2;
+    margin: 0 3px;
+    animation: bounce 1.5s infinite ease-in-out;
+}
+
+.typing-animation span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-animation span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-6px);
+    }
 }
 
 /* Fixed width container */ 
@@ -109,4 +144,10 @@ div[data-testid="stDecoration"]
 .st-emotion-cache-yd4u6l.e1togvvn1 {
     padding: 20px;
     color: rgb(0, 0, 0);
+}
+
+.st-emotion-cache-16tyu1 h1 {
+	font-size: 1.25rem;
+	font-weight: 500;
+	padding: 1.5rem 1rem 1rem 2.5rem;
 }
