@@ -45,7 +45,18 @@ with st.sidebar:
 
 UIManager.render_chat_messages()
 
-if prompt := st.chat_input(placeholder="Ask me anything..."):
+st.markdown("""
+    <style> 
+    .stChatInput, .st-emotion-cache-1eeryuo, .e1togvvn0" {
+        background-color: #fff;
+        height: 100px;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
+if prompt := st.chat_input(placeholder="Ask me anything"):
+    
     if not provider:
         st.error("No AI provider configured. Please check your configuration or enter API credentials in the sidebar.")
         st.stop()

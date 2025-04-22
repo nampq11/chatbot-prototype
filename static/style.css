@@ -1,0 +1,112 @@
+/* Custom styles for HealthCare Chatbot */
+
+/* Base font styling */
+body, .st-b7, stMain, stMarkdownContainer, .st-emotion-cache-p7i6r9, .st-emotion-cache-vjzpa, 
+.st-emotion-cache-102y9h7 h1, .st-emotion-cache-102y9h7 h2, .st-emotion-cache-102y9h7 h3, 
+.st-emotion-cache-102y9h7 h4, .st-emotion-cache-102y9h7 h5, .st-emotion-cache-102y9h7 h6 {
+    font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol' !important;        
+}
+
+/* Custom button styling */
+div[data-testid="stButton"] button[kind="secondary"] {
+    border: none;
+    background-color: transparent;
+    color: #45c3d2;
+    padding: 0;
+    text-align: center;
+}
+
+div[data-testid="stButton"] button[kind="primary"] {
+    border: 1px solid #45c3d2;
+    border-radius: 30px;
+    background-color: #45c3d2;
+    color: #ffffff;
+    padding: 0;
+    text-align: center;
+}
+
+/* Fixed width container */ 
+.main .block-container, 
+[data-testid="stAppViewContainer"] .main .block-container,
+/* [data-testid="stVerticalBlock"], */
+.stMainBlockContainer, .st-emotion-cache-6shykm, 
+div.appview-container .main .block-container,
+div[data-testid="stDecoration"]
+/* div[data-testid="stVerticalBlock"] */
+ {
+    width: 768px !important;
+    max-width: 768px !important;
+    min-width: 768px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+}
+
+/* Remove any default padding */
+[data-testid="stAppViewContainer"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Make content take full width */
+.stText, div[data-testid="element-container"] {
+    width: 768px !important;
+    max-width: 768px !important;
+    box-sizing: border-box !important;
+}
+
+/* Chat input styling */
+.stChatInput, .st-emotion-cache-1eeryuo, .e1togvvn0 {
+    background-color: #fff;
+    height: 100px;
+}
+
+/* Sidebar styling */
+.st-emotion-cache-r90ti5 {
+    background-color: #f9f9f9;
+}
+
+.st-emotion-cache-yd4u6l {
+    border: 1px solid transparent;
+    border-radius: 30px;
+    border-color: #0d0d0d1a;
+    background-color: #fff;
+    position: relative;
+    -moz-box-flex: 1;
+    flex-grow: 1;
+    display: flex;
+    -moz-box-align: center;
+    align-items: center;
+    padding-left: 1rem;
+    max-height: 102px;
+    gap: 0.5rem;
+    overflow: hidden;
+    box-shadow: 1px 2px #0d0d0d33;
+    
+}
+
+.st-emotion-cache-1f3w014 {
+	vertical-align: middle;
+	overflow: hidden;
+	color: inherit;
+	fill: currentcolor;
+	display: inline-flex;
+	-moz-box-align: center;
+	align-items: center;
+	font-size: 1.5rem;
+	width: 1.5rem;
+	height: 75px;
+	flex-shrink: 0;
+}
+
+.st-b1 {
+    background-color: #fff; 
+    color: #5d5d5d;
+}
+
+.st-emotion-cache-yd4u6l.e1togvvn1 {
+    padding: 20px;
+    color: rgb(0, 0, 0);
+}

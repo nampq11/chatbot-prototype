@@ -1,10 +1,11 @@
 import streamlit as st
-from typing import Callable, List, Dict, Optional
+from typing import List, Dict
 from src.agent.provider.provider_base import AIProvider
 from src.agent import ProviderFactory
 from src.agent.conversation_manager import ConversationManager
 from src.config import Config
-import os
+import markdown as md
+from src.utils import load_css
 
 
 class UIManager:
@@ -13,60 +14,11 @@ class UIManager:
     @staticmethod
     def apply_custom_styles():
         """Apply custom font styling for the entire app."""
+        load_css("static/style.css")
+        # Keep minimal inline styles for any dynamic styles
         st.markdown("""
         <style>
-            body, .st-b7, stMain, stMarkdownContainer, .st-emotion-cache-p7i6r9, .st-emotion-cache-16tyu1 h2, .st-emotion-cache-16tyu1 h3, .st-emotion-cache-16tyu1 h4, .st-emotion-cache-16tyu1 h5, .st-emotion-cache-16tyu1 h6, .st-emotion-cache-vjzpa, 
-            .st-emotion-cache-102y9h7 h1, .st-emotion-cache-102y9h7 h2, .st-emotion-cache-102y9h7 h3, .st-emotion-cache-102y9h7 h4, .st-emotion-cache-102y9h7 h5, .st-emotion-cache-102y9h7 h6  {
-                font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol' !important;        
-            }
-            /* Custom button styling */
-            div[data-testid="stButton"] button[kind="secondary"] {
-                border: none;
-                background-color: transparent;
-                color: #45c3d2;
-                padding: 0;
-                text-align: center;
-            }
-            div[data-testid="stButton"] button[kind="primary"] {
-                border: 1px solid #45c3d2;
-                border-radius: 30px;
-                background-color: #45c3d2;
-                color: #ffffff;
-                padding: 0;
-                text-align: center;
-            }
-            
-            /* Force exact 768px width with no adjustments */
-            .main .block-container, 
-            [data-testid="stAppViewContainer"] .main .block-container,
-            [data-testid="stVerticalBlock"],
-            div.appview-container .main .block-container,
-            div[data-testid="stDecoration"],
-            div[data-testid="stVehtml, body, [class*="css"] {
-                font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol' !important;
-            }rticalBlock"] {
-                width: 768px !important;
-                max-width: 768px !important;
-                min-width: 768px !important;
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-                margin-left: auto !important;
-                margin-right: auto !important;
-                box-sizing: border-box !important;
-            }
-            
-            /* Remove any default padding that might reduce effective width */
-            [data-testid="stAppViewContainer"] {
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-            }
-            
-            /* Make sure content inside block container takes full width */
-            .stMarkdown, .stText, div[data-testid="element-container"] {
-                width: 768px !important;
-                max-width: 768px !important;
-                box-sizing: border-box !important;
-            }
+            /* Any additional dynamic styles can go here */
         </style>
         """, unsafe_allow_html=True)
 
@@ -102,7 +54,7 @@ class UIManager:
                 title = conv_data["title"]
                 
                 # Create columns for the conversation title and delete button
-                col1, col2 = st.columns([0.8, 0.2])
+                col1, col2 = st.columns([0.9, 0.1])
                 
                 # Show conversation title as a button to select it
                 if col1.button(title, key=f"conv_{conv_id}"):
@@ -125,7 +77,7 @@ class UIManager:
 
     @staticmethod
     def custom_chat_message(role: str, content: str):
-        """Display a chat message without logo icon for both user and assistant messages."""        
+        """Display a chat message with markdown rendering support."""        
         if role == "user":
             # For user messages, display on the right side
             cols = st.columns([0.4, 0.6])
@@ -141,10 +93,12 @@ class UIManager:
                 </div>
                 """, unsafe_allow_html=True)
         else:
-            # For assistant messages, use full width with left alignment
+            # For assistant messages, use full width with left alignment and support markdown
+            # Directly insert the content which will be interpreted as HTML including links
+            print(content)            
             st.markdown(f"""
             <div style="padding: 10px; border-radius: 10px; margin-bottom: 10px;">
-                <p style="margin: 0;  font-size: 16px; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;"">{content}</p>
+                <div style="margin: 0; font-size: 16px; font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;">{md.markdown(content)}</div>
             </div>
             """, unsafe_allow_html=True)
 
