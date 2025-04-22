@@ -25,7 +25,6 @@ div[data-testid="stButton"] button[kind="primary"] {
     text-align: center;
 }
 
-/* Typing animation styles */
 .typing-animation {
     display: inline-block;
     padding: 15px;
@@ -58,6 +57,44 @@ div[data-testid="stButton"] button[kind="primary"] {
     30% {
         transform: translateY(-6px);
     }
+}
+
+.thinking-animation {
+    display: inline-flex;
+    align-items: center;
+    /* padding: 15px; */
+    /* border-radius: 20px; */
+    /* background-color: rgba(69, 195, 210, 0.1); */
+    color: #45c3d2;
+    font-weight: 500;
+}
+
+.thinking-animation .text {
+    margin-right: 10px;
+    animation: pulse 1.8s infinite ease-in-out, textWave 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes textWave {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+.thinking-animation .waves {
+    display: inline-flex;
+    align-items: center;
 }
 
 /* Fixed width container */ 

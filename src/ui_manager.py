@@ -123,6 +123,7 @@ class UIManager:
                 # Use Streamlit's native markdown rendering for the content
                 # This ensures code blocks are properly formatted with syntax highlighting
                 st.markdown(content)
+            
 
     @staticmethod
     def render_chat_messages():
@@ -241,18 +242,21 @@ class UIManager:
     
     @staticmethod
     def stream_response(provider: AIProvider, messages: List[Dict[str, str]]) -> str:
-        """Stream AI response with a typing animation."""
+        """Stream AI response with a thinking animation."""
         # Create a placeholder for the assistant's response
         response_placeholder = st.empty()
         
-        # Show typing animation
+        # Show thinking animation
         with response_placeholder.container():
             st.markdown("""
             <div style="padding: 10px; border-radius: 10px; margin-bottom: 10px;">
-                <div class="typing-animation">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <div class="thinking-animation">
+                    <span class="text">Thinking</span>
+                    <div class="waves">
+                        <span class="wave"></span>
+                        <span class="wave"></span>
+                        <span class="wave"></span>
+                    </div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
