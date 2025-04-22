@@ -20,7 +20,7 @@ class ConversationManager:
             # Add timestamp for sorting
             st.session_state["conversation_history"][new_id] = {
                 "title": "Cuộc trò chuyện mới",
-                "messages": [{"role": "assistant", "content": "Tôi có thể giúp gì cho bạn?"}],
+                "messages": [],
                 "created_at": time.time()
             }
 
@@ -40,7 +40,7 @@ class ConversationManager:
         # Add the new conversation first
         new_history[new_id] = {
             "title": "Cuộc trò chuyện mới",
-            "messages": [{"role": "assistant", "content": "Tôi có thể giúp gì cho bạn?"}],
+            "messages": [],
             "created_at": time.time()
         }
         
@@ -94,6 +94,9 @@ class ConversationManager:
         """Set the current conversation by ID."""
         if conversation_id in st.session_state["conversation_history"]:
             st.session_state["current_conversation_id"] = conversation_id
+            # Check if 'messages' key exists, if not, initialize it
+            if "messages" not in st.session_state["conversation_history"][conversation_id]:
+                st.session_state["conversation_history"][conversation_id]["messages"] = []
             st.session_state["messages"] = st.session_state["conversation_history"][conversation_id]["messages"]
     
     @staticmethod

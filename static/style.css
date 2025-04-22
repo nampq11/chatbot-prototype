@@ -1,8 +1,8 @@
 /* Custom styles for HealthCare Chatbot */
 
 /* Base font styling */
-body, .st-b7, stMain, stMarkdownContainer, .st-emotion-cache-p7i6r9, .st-emotion-cache-vjzpa, .st-emotion-cache-16tyu1, 
-.st-emotion-cache-102y9h7 h1, .st-emotion-cache-102y9h7 h2, .st-emotion-cache-102y9h7 h3, 
+body, .st-b7, .stMain, .stMarkdownContainer, .st-emotion-cache-p7i6r9, .st-emotion-cache-vjzpa, .st-emotion-cache-16tyu1, 
+.st-emotion-cache-102y9h7 h2, .st-emotion-cache-102y9h7 h3, 
 .st-emotion-cache-102y9h7 h4, .st-emotion-cache-102y9h7 h5, .st-emotion-cache-102y9h7 h6 {
     font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol' !important;        
 }
@@ -14,6 +14,13 @@ div[data-testid="stButton"] button[kind="secondary"] {
     color: #45c3d2;
     padding: 0;
     text-align: center;
+}
+
+.st-emotion-cache-102y9h7 h1 {
+	font-size: 1.5rem;
+	font-weight: 600;
+	padding: 1.25rem 0px 1.2rem;
+    font-family: ui-sans-serif, -apple-system, system-ui, 'Segoe UI', Helvetica, 'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol' !important;        
 }
 
 div[data-testid="stButton"] button[kind="primary"] {
@@ -97,36 +104,75 @@ div[data-testid="stButton"] button[kind="primary"] {
     align-items: center;
 }
 
-/* Fixed width container */ 
-.main .block-container, 
-[data-testid="stAppViewContainer"] .main .block-container,
-/* [data-testid="stVerticalBlock"], */
-.stMainBlockContainer, .st-emotion-cache-6shykm, 
-div.appview-container .main .block-container,
-div[data-testid="stDecoration"]
-/* div[data-testid="stVerticalBlock"] */
- {
-    width: 768px !important;
-    max-width: 768px !important;
-    min-width: 768px !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    box-sizing: border-box !important;
+/* Fixed width container - DESKTOP */ 
+@media (min-width: 768px) {
+    .main .block-container, 
+    [data-testid="stAppViewContainer"] .main .block-container,
+    .stMainBlockContainer, .st-emotion-cache-6shykm, 
+    div.appview-container .main .block-container,
+    div[data-testid="stDecoration"] {
+        width: 768px !important;
+        max-width: 768px !important;
+        min-width: 768px !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Make content take full width in desktop */
+    .stText, div[data-testid="element-container"] {
+        width: 768px !important;
+        max-width: 768px !important;
+        box-sizing: border-box !important;
+    }
+}
+
+/* Responsive container - MOBILE */
+@media (max-width: 767px) {
+    .main .block-container, 
+    [data-testid="stAppViewContainer"] .main .block-container,
+    .stMainBlockContainer, .st-emotion-cache-6shykm, 
+    div.appview-container .main .block-container,
+    div[data-testid="stDecoration"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Make content take full width in mobile */
+    .stText, div[data-testid="element-container"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Adjustments for mobile chat interface */
+    .typing-animation {
+        padding: 10px;
+    }
+    
+    /* Smaller font sizes on mobile */
+    body, .st-b7, stMain, stMarkdownContainer {
+        font-size: 14px !important;
+    }
+    
+    /* Adjust chat input for mobile */
+    .stChatInput, .st-emotion-cache-1eeryuo, .e1togvvn0 {
+        height: 80px;
+    }
 }
 
 /* Remove any default padding */
 [data-testid="stAppViewContainer"] {
     padding-left: 0 !important;
     padding-right: 0 !important;
-}
-
-/* Make content take full width */
-.stText, div[data-testid="element-container"] {
-    width: 768px !important;
-    max-width: 768px !important;
-    box-sizing: border-box !important;
 }
 
 /* Chat input styling */
@@ -183,8 +229,57 @@ div[data-testid="stDecoration"]
     color: rgb(0, 0, 0);
 }
 
+element {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	height: 100%;
+	width: 100%;
+    margin-bottom: 20px;
+}
+
 .st-emotion-cache-16tyu1 h1 {
 	font-size: 1.25rem;
 	font-weight: 500;
 	padding: 1.5rem 1rem 1rem 2.5rem;
 }
+
+/* Mobile-specific styling for streamlit components */
+@media (max-width: 767px) {
+    /* Better sidebar handling for mobile */
+    .st-emotion-cache-r90ti5 {
+        width: 100% !important;
+    }
+    
+    /* Adjust header logo and text for mobile */
+    img[width="200"] {
+        width: 150px !important;
+    }
+    
+    /* Smaller padding for mobile chat bubbles */
+    .custom_chat_message {
+        padding: 8px !important;
+    }
+    
+    /* Custom button styling for mobile */
+    div[data-testid="stButton"] button {
+        padding: 0 10px !important;
+        font-size: 14px !important;
+    }
+    
+    /* Adjust chat input field for mobile */
+    .st-emotion-cache-yd4u6l {
+        max-height: 80px;
+        padding-left: 0.5rem;
+        gap: 0.25rem;
+    }
+    
+    /* Smaller icons on mobile */
+    .st-emotion-cache-1f3w014 {
+        font-size: 1.2rem;
+        width: 1.2rem;
+        height: 60px;
+    }
+}   

@@ -48,7 +48,7 @@ class UIManager:
                 title = conv_data["title"]
                 
                 # Create columns for the conversation title and delete button
-                col1, col2 = st.columns([0.9, 0.1])
+                col1, col2 = st.columns([0.8, 0.2])
                 
                 # Show conversation title as a button to select it
                 if col1.button(title, key=f"conv_{conv_id}"):
@@ -242,7 +242,7 @@ class UIManager:
     
     @staticmethod
     def stream_response(provider: AIProvider, messages: List[Dict[str, str]]) -> str:
-        """Stream AI response with a thinking animation."""
+        """Stream AI response with a thinking animation that hides when text generation begins."""
         # Create a placeholder for the assistant's response
         response_placeholder = st.empty()
         
@@ -262,17 +262,24 @@ class UIManager:
             """, unsafe_allow_html=True)
             
         # Short pause to show the animation (optional)
-        import time
-        time.sleep(0.5)
+        # import time
+        # time.sleep(0.5)
         
         full_response = ""
+        first_chunk = True
         
         try:
             for content_chunk in provider.generate_response(messages):
                 full_response += content_chunk
+                
                 # Update the placeholder with the growing response
                 with response_placeholder.container():
+                    # Clear thinking animation on first text chunk
                     UIManager.custom_chat_message("assistant", full_response + "▌")
+                
+                # After first chunk is processed, we're no longer in "first chunk" mode
+                if first_chunk:
+                    first_chunk = False
             
             # Final update without cursor
             with response_placeholder.container():
