@@ -2,7 +2,7 @@ from typing import Optional, Any
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 import streamlit as st
-
+import torch
 
 class InputArgs(BaseModel):
     AZURE_API_KEY: str
@@ -20,6 +20,10 @@ class Config(BaseModel):
     MONGO_STATE_CHECKPOINT_COLLECTION: str = "bkcare_state_checkpoints"
     MONGO_STATE_WRITES_COLLECTION: str = "bkcare_state_writes"
     MONGO_LONG_TERM_MEMORY_COLLECTION: str = "bkcare_long_term_memory"
+    TOTAL_MESSAGES_SUMMARY_TRIGGER: int = 5
+    RAG_TEXT_EMBEDDING_MODEL_ID: str = "BookingCare/gte-multilingual-base-v2.1"
+    RAG_TOP_K: int = 5
+    RAG_DEVICE: str = "cuda" if torch.cuda.is_available() else "cpu"
     
     def init(self, args):
         self.args = args
