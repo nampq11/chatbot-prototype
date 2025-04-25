@@ -15,9 +15,6 @@ import streamlit as st
 from src.app.agent.workflow.state import BookingCareAgentState
 from src.config import Config
 
-os.environ["OPIK_API_KEY"] = st.secrets.opik_credential.get("OPIK_API_KEY", "")
-os.environ["OPIK_WORKSPACE"] = st.secrets.opik_credential.get("OPIK_WORKSPACE", "")
-
 config = Config()
 
 async def get_response(

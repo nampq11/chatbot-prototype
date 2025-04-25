@@ -3,7 +3,7 @@ import streamlit as st
 import litellm
 from typing import Dict, Iterator, List
 
-from src.agent.provider.provider_base import AIProvider
+from src.app.agent.provider.provider_base import AIProvider
 
 
 class OpenAIProvider(AIProvider):
