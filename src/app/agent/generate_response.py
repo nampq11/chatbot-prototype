@@ -1,15 +1,24 @@
+import os
 import uuid
 from typing import Any, AsyncGenerator, Union
 
 from langchain_core.messages import AIMessage, AIMessageChunk, HumanMessage
 from langgraph.checkpoint.mongodb import AsyncMongoDBSaver
+from opik.integrations.langchain import OpikTracer
 
-from src.agent.workflow.graph import (
+from src.app.agent.workflow.graph import (
     create_workflow_graph,
 )
 
-from src.agent.workflow.state import BookingCareAgentState
+import streamlit as st
+
+from src.app.agent.workflow.state import BookingCareAgentState
 from src.config import Config
+
+os.environ["OPIK_API_KEY"] = st.secrets.opik_credential.get("OPIK_API_KEY", "")
+os.environ["OPIK_WORKSPACE"] = st.secrets.opik_credential.get("OPIK_WORKSPACE", "")
+
+config = Config()
 
 async def get_response(
     messages: str | list[str] | list[dict[str, Any]],
@@ -24,19 +33,20 @@ async def get_response(
 
     try:
         async with AsyncMongoDBSaver.from_conn_string(
-            conn_string=Config.MONGO_URI,
-            db_name=Config.MONGO_DB_NAME,
-            checkpoint_collection_name=Config.MONGO_CHECKPOINT_COLLECTION_NAME,
-            writes_collection_name=Config.MONGO_WRITES_COLLECTION_NAME,
+            conn_string=config.MONGO_URI,
+            db_name=config.MONGO_DB_NAME,
+            checkpoint_collection_name=config.MONGO_CHECKPOINT_COLLECTION_NAME,
+            writes_collection_name=config.MONGO_WRITES_COLLECTION_NAME,
         ) as checkpointer:
             graph = graph_builder.compile(checkpointer=checkpointer)
+            opik_tracer = OpikTracer(graph=graph.get_graph(xray=True))
             
             thread_id = (
                 bookingcare_id if not new_thread else f"{bookingcare_id}-{uuid.uuid4()}"
             )
             config = {
                 "configurable": {"thread_id": thread_id},
-                # "callbacks"
+                "callbacks": [opik_tracer],
             }
             output_state = await graph.ainvoke(
                 input={
@@ -66,19 +76,20 @@ async def get_streaming_response(
 
     try:
         async with AsyncMongoDBSaver.from_conn_string(
-            conn_string=Config.MONGO_URI,
-            db_name=Config.MONGO_DB_NAME,
-            checkpoint_collection_name=Config.MONGO_CHECKPOINT_COLLECTION_NAME,
-            writes_collection_name=Config.MONGO_WRITES_COLLECTION_NAME,
+            conn_string=config.MONGO_URI,
+            db_name=config.MONGO_DB_NAME,
+            checkpoint_collection_name=config.MONGO_CHECKPOINT_COLLECTION_NAME,
+            writes_collection_name=config.MONGO_WRITES_COLLECTION_NAME,
         ) as checkpointer:
             graph = graph_builder.compile(checkpointer=checkpointer)
+            opik_tracer = OpikTracer(graph=graph.get_graph(xray=True))
 
             thread_id = (
                 bookingcare_id if not new_thread else f"{bookingcare_id}-{uuid.uuid4()}"
             )
             config = {
                 "configurable": {"thread_id": thread_id},
-                # "callbacks"
+                "callbacks": [opik_tracer],
             }
             async for chunk in graph.astream(
                 input={

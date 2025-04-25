@@ -1,8 +1,8 @@
 from typing import Dict, List, Optional, Type
-from src.agent.provider.azure_provider import AzureOpenAIProvider
-from src.agent.provider.gemini_provider import GeminiProvider
-from src.agent.provider.openai_provider import OpenAIProvider
-from src.agent.provider.provider_base import AIProvider
+from src.app.agent.provider.azure_provider import AzureOpenAIProvider
+from src.app.agent.provider.gemini_provider import GeminiProvider
+from src.app.agent.provider.openai_provider import OpenAIProvider
+from src.app.agent.provider.provider_base import AIProvider
 
 class ProviderFactory:
     """Factory class to create and manage AI providers."""

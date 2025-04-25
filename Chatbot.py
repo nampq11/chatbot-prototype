@@ -1,7 +1,7 @@
 import streamlit as st
 from src.config import Config
-from src.agent import ProviderFactory
-from src.agent.conversation_manager import ConversationManager
+from src.app.agent import ProviderFactory
+from src.app.agent.conversation_manager import ConversationManager
 from src.ui_manager import UIManager
 
 config = Config()

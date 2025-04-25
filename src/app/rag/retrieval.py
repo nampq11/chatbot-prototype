@@ -12,6 +12,8 @@ from .embeddings import get_embedding_model
 
 Retriever = MongoDBAtlasHybridSearchRetriever
 
+config = Config()
+
 def get_retriever(
     embedding_model_id: str,
     k: int = 3,
@@ -36,9 +38,9 @@ def get_hybird_search_retriever(
 ) -> MongoDBAtlasHybridSearchRetriever:
     
     vectorstore = MongoDBAtlasVectorSearch.from_connection_string(
-        connection_string=Config.MONGO_URI,
+        connection_string=config.MONGO_URI,
         embedding=embedding_model,
-        namespace=f"{Config.MONGO_DB_NAME}.{Config.MONGO_LONG_TERM_MEMORY_COLLECTION}",
+        namespace=f"{config.MONGO_DB_NAME}.{config.MONGO_LONG_TERM_MEMORY_COLLECTION}",
         text_key="chunk",
         embedding_key="embedding",
         relevance_score_fn="consine",

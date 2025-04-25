@@ -1,8 +1,8 @@
 import streamlit as st
 from typing import List, Dict
-from src.agent.provider.provider_base import AIProvider
-from src.agent import ProviderFactory
-from src.agent.conversation_manager import ConversationManager
+from src.app.agent.provider.provider_base import AIProvider
+from src.app.agent import ProviderFactory
+from src.app.agent.conversation_manager import ConversationManager
 from src.config import Config
 import markdown as md
 from src.utils import load_css

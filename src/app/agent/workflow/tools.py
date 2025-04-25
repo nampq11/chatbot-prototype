@@ -3,10 +3,12 @@ from langchain.tools.retriever import create_retriever_tool
 from src.rag.retrieval import get_retriever
 from src.config import Config
 
+config = Config()
+
 retriever = get_retriever(
-    embedding_model_id=Config.RAG_TEXT_EMBEDDING_MODEL_ID,
-    k=Config.RAG_TOP_K,
-    device=Config.RAG_DEVICE,
+    embedding_model_id=config.RAG_TEXT_EMBEDDING_MODEL_ID,
+    k=config.RAG_TOP_K,
+    device=config.RAG_DEVICE,
 )
 
 retriever_tool = create_retriever_tool(
