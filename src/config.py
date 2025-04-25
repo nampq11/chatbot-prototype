@@ -2,7 +2,6 @@ from typing import Optional, Any
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 import streamlit as st
-import torch
 
 class InputArgs(BaseModel):
     AZURE_API_KEY: str
@@ -14,7 +13,7 @@ class InputArgs(BaseModel):
 class Config(BaseModel):
     args: Optional[Any] = None
     MONGO_URI: str = Field(
-        default="mongodb+srv://nampham11062002:Phamnamaq123@@cluster0.t13jleh.mongodb.net/?appName=Cluster0"
+        default="mongodb+srv://nampham11062002:phamnamaq123@cluster0.t13jleh.mongodb.net",
     )
     MONGO_DB_NAME: str = "bkcare"
     MONGO_STATE_CHECKPOINT_COLLECTION: str = "bkcare_state_checkpoints"
@@ -22,9 +21,19 @@ class Config(BaseModel):
     MONGO_LONG_TERM_MEMORY_COLLECTION: str = "bkcare_long_term_memory"
     TOTAL_MESSAGES_SUMMARY_TRIGGER: int = 5
     RAG_TEXT_EMBEDDING_MODEL_ID: str = "BookingCare/gte-multilingual-base-v2.1"
-    RAG_TOP_K: int = 5
-    RAG_DEVICE: str = "cuda" if torch.cuda.is_available() else "cpu"
     
+    AZURE_API_KEY: str = st.secrets.azure_credential.get("AZURE_API_KEY", "")
+    LLM_MODEL_NAME: str = st.secrets.azure_credential.get("AZURE_MODEL_NAME", "")
+    AZURE_API_VERSION: str = st.secrets.azure_credential.get("AZURE_API_VERSION", "")
+    
+    RAG_CHUNK_SIZE: int = 768
+    RAG_TOP_K: int = 5
+    RAG_DEVICE: str = "cpu"
+
+    COMET_API_KEY: str = st.secrets.comet_credential.get("COMET_API_KEY", "")
+    COMET_WORKSPACE: str = st.secrets.comet_credential.get("COMET_WORKSPACE", "")
+    COMET_PROJECT: str = "bookingcare"
+
     def init(self, args):
         self.args = args
     

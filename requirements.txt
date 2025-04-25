@@ -15,3 +15,5 @@ langchain-mongodb==0.6.1
 markdown==3.8
 langchain-huggingface==0.1.2
 langgraph==0.3.31
+opik==1.7.11
+datasketch==1.6.5
