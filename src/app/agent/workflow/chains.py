@@ -1,7 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import AzureChatOpenAI
 
-from src.agent.workflow.tools import tools
+from src.app.agent.workflow.tools import tools
 from src.config import Config
 from src.domain.prompts import (
     BOOKINGCARE_SYSTEM_PROMPT,

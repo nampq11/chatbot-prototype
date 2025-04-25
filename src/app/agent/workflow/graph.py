@@ -3,9 +3,9 @@ from functools import lru_cache
 from langgraph.graph import END, StateGraph, START
 from langgraph.prebuilt import tools_condition
 
-from src.agent.workflow.edges import should_summarize_conversation
+from src.app.agent.workflow.edges import should_summarize_conversation
 
-from src.agent.workflow.nodes import (
+from src.app.agent.workflow.nodes import (
     conversation_node,
     summarize_conversation_node,
     summarize_context_node,
@@ -13,7 +13,7 @@ from src.agent.workflow.nodes import (
     connector_node,
 )
 
-from src.agent.workflow.state import BookingCareAgentState
+from src.app.agent.workflow.state import BookingCareAgentState
 
 @lru_cache(maxsize=1)
 def create_workflow_graph():

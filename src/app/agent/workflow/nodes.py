@@ -2,14 +2,14 @@ from langchain_core.messages import RemoveMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.prebuilt import ToolNode
 
-from src.agent.workflow.chains import (
+from src.app.agent.workflow.chains import (
     get_bookingcare_response_chain,
     get_conversation_summary_chain,
     get_context_summary_chain,
 )
 
-from src.agent.workflow.state import BookingCareAgentState
-from src.agent.workflow.tools import tools
+from src.app.agent.workflow.state import BookingCareAgentState
+from src.app.agent.workflow.tools import tools
 from src.config import Config
 
 retriever_node = ToolNode(tools)
