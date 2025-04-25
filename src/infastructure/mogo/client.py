@@ -8,13 +8,15 @@ from loguru import logger
 
 T = TypeVar("T", bound=BaseModel)
 
+config = Config()
+
 class MongoClientWrapper(Generic[T]):
     def __init__(
         self,
         model: Type[T],
         collection_name: str,
-        database_name: str = Config.MONGO_DB_NAME,
-        mogodb_uri: str = Config.MONGO_URI,
+        database_name: str = config.MONGO_DB_NAME,
+        mogodb_uri: str = config.MONGO_URI,
     ):
         self.model = model
         self.collection_name = collection_name
