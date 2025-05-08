@@ -18,3 +18,4 @@ langgraph==0.3.31
 opik==1.7.11
 datasketch==1.6.5
 langgraph-checkpoint==2.0.24
+langgraph-checkpoint-mongodb==0.1.3
