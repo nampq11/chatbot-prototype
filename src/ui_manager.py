@@ -257,18 +257,11 @@ class UIManager:
             <div style="padding: 10px; border-radius: 10px; margin-bottom: 10px;">
                 <div class="thinking-animation">
                     <span class="text">Thinking</span>
-                    <div class="waves">
-                        <span class="wave"></span>
-                        <span class="wave"></span>
-                        <span class="wave"></span>
                     </div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
             
-        # Short pause to show the animation (optional)
-        # import time
-        # time.sleep(0.5)
         
         full_response = ""
         first_chunk = True

@@ -1,7 +1,7 @@
 import os
 import uuid
 from typing import Any, AsyncGenerator, Union
-from langchain_core.messages import AIMessage, AIMessage, HumanMessage
+from langchain_core.messages import AIMessage, AIMessage, HumanMessage, AIMessageChunk
 from langgraph.checkpoint.mongodb import AsyncMongoDBSaver
 from opik.integrations.langchain import OpikTracer
 
@@ -87,20 +87,21 @@ async def get_streaming_response(
                 "configurable": {"thread_id": thread_id},
                 "callbacks": [opik_tracer],
             }
-            format_messages = __format_messages(messages)
-            print('format_messages', format_messages)
             async for chunk in graph.astream(
                 input={
-                    "messages": format_messages,
+                    "messages": __format_messages(messages),
                     "bookingcare_name": bookingcare_name,
                     "bookingcare_perspective": bookingcare_perspective,
                     "bookingcare_style": bookingcare_style,
                     "bookingcare_context": bookingcare_context,
                 },
                 config=graph_config,
+                stream_mode="messages"
             ):
-                if "conversation_node" in chunk and isinstance(chunk['conversation_node']['messages'], AIMessage):
-                    yield chunk.get("conversation_node").get("messages").content
+                if chunk[1]["langgraph_node"] == "conversation_node" and isinstance(
+                    chunk[0], AIMessageChunk
+                ):
+                    yield chunk[0].content
                     
     except Exception as e:
         raise RuntimeError(f"Error running conversation workflow: {str(e)}") from e
@@ -109,8 +110,6 @@ def __format_messages(
     messages: Union[str, list[dict[str, Any]]]
 ) -> list[Union[HumanMessage, AIMessage]]:
     
-    # check if messages is allready of list HumanMessage or AIMessage
-    print('type messages', type(messages))
     if isinstance(messages, dict):
         if messages["role"] == "user":
             return [HumanMessage(content=messages["content"])]

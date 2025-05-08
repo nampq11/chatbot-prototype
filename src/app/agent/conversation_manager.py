@@ -4,7 +4,7 @@ from collections import OrderedDict
 from typing import Dict, List, Optional
 import streamlit as st
 
-from src.app.agent.reset_conversation import reset_conversation_state
+from src.app.agent.reset_memory import reset_conversation_state
 
 class ConversationManager:
     """Manages chat conversations and history."""
