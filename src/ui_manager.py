@@ -1,12 +1,17 @@
+import asyncio
 import streamlit as st
 from typing import List, Dict
 from src.app.agent.provider.provider_base import AIProvider
 from src.app.agent import ProviderFactory
 from src.app.agent.conversation_manager import ConversationManager
 from src.config import Config
+from src.app.agent.generate_response import get_streaming_response
+from src.domain.domain import DomainFactory
 import markdown as md
 from src.utils import load_css
 
+factory = DomainFactory()
+domain_id = 'healthcare'
 
 class UIManager:
     """Manages Streamlit UI components and interactions."""
@@ -241,7 +246,7 @@ class UIManager:
         return False
     
     @staticmethod
-    def stream_response(provider: AIProvider, messages: List[Dict[str, str]]) -> str:
+    async def stream_response(provider: AIProvider, messages: List[Dict[str, str]]) -> str:
         """Stream AI response with a thinking animation that hides when text generation begins."""
         # Create a placeholder for the assistant's response
         response_placeholder = st.empty()
@@ -267,10 +272,20 @@ class UIManager:
         
         full_response = ""
         first_chunk = True
-        
+        domain = factory.get_domain(domain_id)
         try:
-            for content_chunk in provider.generate_response(messages):
-                full_response += content_chunk
+            # get last human message
+            humman_message = messages[-1]
+            print('humman_message', humman_message)
+            async for chunk in get_streaming_response(
+                messages=humman_message,
+                bookingcare_id=domain_id,
+                bookingcare_name=domain.name,
+                bookingcare_perspective=domain.perspective,
+                bookingcare_style=domain.style,
+                bookingcare_context="",
+            ):
+                full_response += chunk
                 
                 # Update the placeholder with the growing response
                 with response_placeholder.container():

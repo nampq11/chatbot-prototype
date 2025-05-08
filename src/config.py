@@ -7,24 +7,26 @@ class InputArgs(BaseModel):
     AZURE_API_KEY: str
     AZURE_BASE_URL: str
     AZURE_API_VERSION: str
-    openai_api_key: str
+    openai_api_key: str 
     gemini_api_key: str 
 
 class Config(BaseModel):
     args: Optional[Any] = None
     MONGO_URI: str = Field(
-        default="mongodb+srv://nampham11062002:phamnamaq123@cluster0.t13jleh.mongodb.net",
+        default=st.secrets.mongodb_credential.get("MONGO_URI", ""),
     )
     MONGO_DB_NAME: str = "bkcare"
     MONGO_STATE_CHECKPOINT_COLLECTION: str = "bkcare_state_checkpoints"
     MONGO_STATE_WRITES_COLLECTION: str = "bkcare_state_writes"
     MONGO_LONG_TERM_MEMORY_COLLECTION: str = "bkcare_long_term_memory"
     TOTAL_MESSAGES_SUMMARY_TRIGGER: int = 5
+    TOTAL_MESSAGES_AFTER_SUMMARY: int = 3
     RAG_TEXT_EMBEDDING_MODEL_ID: str = "BookingCare/gte-multilingual-base-v2.1"
     
     AZURE_API_KEY: str = st.secrets.azure_credential.get("AZURE_API_KEY", "")
     LLM_MODEL_NAME: str = st.secrets.azure_credential.get("AZURE_MODEL_NAME", "")
     AZURE_API_VERSION: str = st.secrets.azure_credential.get("AZURE_API_VERSION", "")
+    AZURE_BASE_URL: str = st.secrets.azure_credential.get("AZURE_BASE_URL", "")
     
     RAG_CHUNK_SIZE: int = 768
     RAG_TOP_K: int = 5

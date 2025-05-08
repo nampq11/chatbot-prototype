@@ -1,8 +1,7 @@
 import os
 import uuid
 from typing import Any, AsyncGenerator, Union
-
-from langchain_core.messages import AIMessage, AIMessageChunk, HumanMessage
+from langchain_core.messages import AIMessage, AIMessage, HumanMessage
 from langgraph.checkpoint.mongodb import AsyncMongoDBSaver
 from opik.integrations.langchain import OpikTracer
 
@@ -32,8 +31,8 @@ async def get_response(
         async with AsyncMongoDBSaver.from_conn_string(
             conn_string=config.MONGO_URI,
             db_name=config.MONGO_DB_NAME,
-            checkpoint_collection_name=config.MONGO_CHECKPOINT_COLLECTION_NAME,
-            writes_collection_name=config.MONGO_WRITES_COLLECTION_NAME,
+            checkpoint_collection_name=config.MONGO_STATE_CHECKPOINT_COLLECTION,
+            writes_collection_name=config.MONGO_STATE_WRITES_COLLECTION,
         ) as checkpointer:
             graph = graph_builder.compile(checkpointer=checkpointer)
             opik_tracer = OpikTracer(graph=graph.get_graph(xray=True))
@@ -41,7 +40,7 @@ async def get_response(
             thread_id = (
                 bookingcare_id if not new_thread else f"{bookingcare_id}-{uuid.uuid4()}"
             )
-            config = {
+            graph_config = {
                 "configurable": {"thread_id": thread_id},
                 "callbacks": [opik_tracer],
             }
@@ -53,7 +52,7 @@ async def get_response(
                     "bookingcare_style": bookingcare_style,
                     "bookingcare_context": bookingcare_context,
                 },
-                config=config,
+                config=graph_config,
             )
         last_message = output_state["messages"][-1]
         return last_message.content, BookingCareAgentState(**output_state, thread_id=thread_id)
@@ -75,8 +74,8 @@ async def get_streaming_response(
         async with AsyncMongoDBSaver.from_conn_string(
             conn_string=config.MONGO_URI,
             db_name=config.MONGO_DB_NAME,
-            checkpoint_collection_name=config.MONGO_CHECKPOINT_COLLECTION_NAME,
-            writes_collection_name=config.MONGO_WRITES_COLLECTION_NAME,
+            checkpoint_collection_name=config.MONGO_STATE_CHECKPOINT_COLLECTION,
+            writes_collection_name=config.MONGO_STATE_WRITES_COLLECTION,
         ) as checkpointer:
             graph = graph_builder.compile(checkpointer=checkpointer)
             opik_tracer = OpikTracer(graph=graph.get_graph(xray=True))
@@ -84,24 +83,24 @@ async def get_streaming_response(
             thread_id = (
                 bookingcare_id if not new_thread else f"{bookingcare_id}-{uuid.uuid4()}"
             )
-            config = {
+            graph_config = {
                 "configurable": {"thread_id": thread_id},
                 "callbacks": [opik_tracer],
             }
+            format_messages = __format_messages(messages)
+            print('format_messages', format_messages)
             async for chunk in graph.astream(
                 input={
-                    "messages": __format_messages(messages),
+                    "messages": format_messages,
                     "bookingcare_name": bookingcare_name,
                     "bookingcare_perspective": bookingcare_perspective,
                     "bookingcare_style": bookingcare_style,
                     "bookingcare_context": bookingcare_context,
                 },
-                config=config,
+                config=graph_config,
             ):
-                if chunk[1]["langraph_node"] == "conversation_node" and isinstance(
-                    chunk[0], AIMessageChunk
-                ):
-                    yield chunk[0].content
+                if "conversation_node" in chunk and isinstance(chunk['conversation_node']['messages'], AIMessage):
+                    yield chunk.get("conversation_node").get("messages").content
                     
     except Exception as e:
         raise RuntimeError(f"Error running conversation workflow: {str(e)}") from e
@@ -109,6 +108,15 @@ async def get_streaming_response(
 def __format_messages(
     messages: Union[str, list[dict[str, Any]]]
 ) -> list[Union[HumanMessage, AIMessage]]:
+    
+    # check if messages is allready of list HumanMessage or AIMessage
+    print('type messages', type(messages))
+    if isinstance(messages, dict):
+        if messages["role"] == "user":
+            return [HumanMessage(content=messages["content"])]
+        elif messages["role"] == "assistant":
+            return [AIMessage(content=messages["content"])]
+    
     if isinstance(messages, str):
         return [HumanMessage(content=messages)]
     

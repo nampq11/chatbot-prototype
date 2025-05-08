@@ -7,6 +7,7 @@ from src.domain.prompts import (
     BOOKINGCARE_SYSTEM_PROMPT,
     SUMMARY_PROMPT,
     CONTEXT_SUMMARY_PROMPT,
+    EXTEND_SUMMARY_PROMPT
 )
 
 config = Config()
@@ -18,6 +19,7 @@ def get_chat_model(
     """Get the chat model with the specified parameters."""
     return AzureChatOpenAI(
         api_key=config.AZURE_API_KEY,
+        azure_endpoint=config.AZURE_BASE_URL,
         azure_deployment=model_name,
         api_version=config.AZURE_API_VERSION,
         temperature=temperature,
@@ -46,7 +48,7 @@ def get_conversation_summary_chain(
 ):
     model = get_chat_model(model_name=config.LLM_MODEL_NAME)
 
-    summary_message = BOOKINGCARE_SYSTEM_PROMPT if summary else SUMMARY_PROMPT
+    summary_message = EXTEND_SUMMARY_PROMPT if summary else SUMMARY_PROMPT
 
     prompt = ChatPromptTemplate.from_messages(
         [

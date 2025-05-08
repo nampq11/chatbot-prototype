@@ -12,6 +12,8 @@ from src.app.agent.workflow.state import BookingCareAgentState
 from src.app.agent.workflow.tools import tools
 from src.config import Config
 
+config = Config()
+
 retriever_node = ToolNode(tools)
 
 async def conversation_node(
@@ -51,9 +53,9 @@ async def summarize_conversation_node(
 
     delete_messages = [
         RemoveMessage(id=m.id)
-        for m in state["messages"][: -Config.TOTAL_MESSAGES_AFTER_SUMMARY]
+        for m in state["messages"][: -config.TOTAL_MESSAGES_AFTER_SUMMARY]
     ]
-    return {"summary": response.context, "messages": delete_messages}
+    return {"summary": response.content, "messages": delete_messages}
 
 async def summarize_context_node(
     state: BookingCareAgentState
@@ -65,7 +67,7 @@ async def summarize_context_node(
             "context": state["messages"][-1].content,
         }
     )
-    state["messages"][-1].content = response.context
+    state["messages"][-1].content = response.content
 
     return {}
 

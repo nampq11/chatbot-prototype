@@ -1,3 +1,4 @@
+import asyncio
 import streamlit as st
 from src.config import Config
 from src.app.agent import ProviderFactory
@@ -6,7 +7,7 @@ from src.ui_manager import UIManager
 
 config = Config()
 
-ConversationManager.initialize_session_state()
+asyncio.run(ConversationManager.initialize_session_state())
 
 UIManager.apply_custom_styles()
 
@@ -60,7 +61,7 @@ if prompt := st.chat_input(placeholder="Ask me anything"):
     UIManager.custom_chat_message("user", prompt)
     
     messages = ConversationManager.get_current_messages()
-    full_response = UIManager.stream_response(provider, messages)
+    full_response = asyncio.run(UIManager.stream_response(provider, messages))
     
     ConversationManager.add_message("assistant", full_response)
 

@@ -4,13 +4,15 @@ from collections import OrderedDict
 from typing import Dict, List, Optional
 import streamlit as st
 
+from src.app.agent.reset_conversation import reset_conversation_state
 
 class ConversationManager:
     """Manages chat conversations and history."""
     
     @staticmethod
-    def initialize_session_state() -> None:
+    async def initialize_session_state() -> None:
         """Initialize session state for conversations if it doesn't exist."""
+
         if "conversation_history" not in st.session_state:
             st.session_state["conversation_history"] = OrderedDict()  # Use OrderedDict instead of dict
             
@@ -23,11 +25,15 @@ class ConversationManager:
                 "messages": [],
                 "created_at": time.time()
             }
+            await reset_conversation_state()
+
 
         # Initialize messages for the current conversation if needed
         if "messages" not in st.session_state:
             current_id = st.session_state["current_conversation_id"]
             st.session_state["messages"] = st.session_state["conversation_history"][current_id]["messages"]
+            await reset_conversation_state()
+
 
     @staticmethod
     def create_new_conversation() -> None:
@@ -124,3 +130,10 @@ class ConversationManager:
     def get_current_messages() -> List[Dict[str, str]]:
         """Get messages in the current conversation."""
         return st.session_state.messages
+    
+    @staticmethod
+    def get_last_message() -> Optional[Dict[str, str]]:
+        """Get the last message in the current conversation."""
+        if st.session_state.messages:
+            return st.session_state.messages[-1]
+        return None
