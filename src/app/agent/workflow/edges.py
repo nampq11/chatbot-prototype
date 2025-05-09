@@ -12,7 +12,7 @@ def should_summarize_conversation(
 ) -> Literal["summarize_conversation_node", "__end__"]:
     messages = state["messages"]
 
-    if len(messages) > config.TOTAL_MESSAGES_SUMMARY_TRIGGER:
+    if len(messages) > config.message.TOTAL_MESSAGES_SUMMARY_TRIGGER:
         return "summarize_conversation_node"
     
     return END

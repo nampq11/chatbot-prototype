@@ -269,7 +269,6 @@ class UIManager:
         try:
             # get last human message
             humman_message = messages[-1]
-            print('humman_message', humman_message)
             async for chunk in get_streaming_response(
                 messages=humman_message,
                 bookingcare_id=domain_id,

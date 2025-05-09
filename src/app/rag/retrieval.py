@@ -17,6 +17,9 @@ config = Config()
 def get_retriever(
     embedding_model_id: str,
     k: int = 3,
+    namespace: str = config.mongo.COSMETIC_SURGEON_COLLECTION,
+    text_key: str = "text",
+    search_index_name: str = config.mongo.COSMETIC_SURGEON_SEARCH_INDEX_NAME,
     device: str = "cpu"
 ) -> Retriever:
     logger.info(
@@ -29,28 +32,30 @@ def get_retriever(
     )
     return get_hybird_search_retriever(
         embedding_model=embedding_model,
-        k=k
+        k=k,
+        namespace=namespace,
+        text_key=text_key,
+        search_index_name=search_index_name,
     )
 
 def get_hybird_search_retriever(
     embedding_model: SentenceTransformer,
-    k: int
-) -> MongoDBAtlasHybridSearchRetriever:
-    
-    vectorstore = MongoDBAtlasVectorSearch.from_connection_string(
-        connection_string=config.MONGO_URI,
+    k: int = 3,
+    namespace: str = config.mongo.COSMETIC_SURGEON_COLLECTION,
+    text_key: str = "text",
+    search_index_name: str = config.mongo.COSMETIC_SURGEON_SEARCH_INDEX_NAME,
+) -> Retriever:
+    """Get a hybrid search retriever."""
+    vector_store = MongoDBAtlasVectorSearch(
+        connection_string=config.mongo.URI,
+        namespace=namespace,
         embedding=embedding_model,
-        namespace=f"{config.MONGO_DB_NAME}.{config.MONGO_LONG_TERM_MEMORY_COLLECTION}",
-        text_key="chunk",
-        embedding_key="embedding",
-        relevance_score_fn="consine",
+        text_key=text_key,
+        index_name=config.mongo.COSMETIC_SURGEON_VECTOR_STORE
     )
-
-    retriever = MongoDBAtlasHybridSearchRetriever(
-        vectorstore=vectorstore,
-        search_index_name="hybrid_search_index",
-        top_k=k,
-        vector_penalty=50,
-        fulltext_penalty=50,
+    
+    return MongoDBAtlasHybridSearchRetriever(
+        vectorstore=vector_store,
+        search_index_name=search_index_name,
+        k=k
     )
-    return retriever

@@ -15,8 +15,8 @@ class MongoClientWrapper(Generic[T]):
         self,
         model: Type[T],
         collection_name: str,
-        database_name: str = config.MONGO_DB_NAME,
-        mogodb_uri: str = config.MONGO_URI,
+        database_name: str = config.mongo.DB_NAME,
+        mogodb_uri: str = config.mongo.URI,
     ):
         self.model = model
         self.collection_name = collection_name

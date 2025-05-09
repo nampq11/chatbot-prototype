@@ -34,7 +34,7 @@ def deduplicate_documents(
 def find_duplicates(
     documents: List[Document],
     threshold: float = 0.7,
-    num_perm: int = int(config.RAG_CHUNK_SIZE *0.5),
+    num_perm: int = int(config.rag.CHUNK_SIZE * 0.5),
 ) -> List[Tuple[int, int, float]]:
     minhashes = []
 
@@ -68,4 +68,11 @@ def find_duplicates(
                     duplicates.append(duplicate_info)
     
     return duplicates
+
+def get_minhash_lsh(
+    documents: list[Document],
+    num_perm: int = int(config.rag.CHUNK_SIZE * 0.5),
+) -> MinHashLSH:
+    """Get MinHash LSH for document deduplication."""
+    # ... rest of the code ...
 

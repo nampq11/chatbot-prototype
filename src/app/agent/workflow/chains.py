@@ -14,18 +14,19 @@ config = Config()
 
 def get_chat_model(
     temperature: float = 0.7,
-    model_name: str = config.LLM_MODEL_NAME
+    model_name: str = config.azure.MODEL_NAME
 ) -> AzureChatOpenAI:
     """Get the chat model with the specified parameters."""
     return AzureChatOpenAI(
-        api_key=config.AZURE_API_KEY,
-        azure_endpoint=config.AZURE_BASE_URL,
+        api_key=config.azure.API_KEY,
+        azure_endpoint=config.azure.BASE_URL,
         azure_deployment=model_name,
-        api_version=config.AZURE_API_VERSION,
+        api_version=config.azure.API_VERSION,
         temperature=temperature,
         max_tokens=None,
         timeout=None,
         max_retries=2,
+        stream_usage=True
     )
 
 def get_bookingcare_response_chain():
@@ -46,7 +47,7 @@ def get_bookingcare_response_chain():
 def get_conversation_summary_chain(
     summary: str = ""
 ):
-    model = get_chat_model(model_name=config.LLM_MODEL_NAME)
+    model = get_chat_model(model_name=config.azure.MODEL_NAME)
 
     summary_message = EXTEND_SUMMARY_PROMPT if summary else SUMMARY_PROMPT
 
@@ -62,7 +63,7 @@ def get_conversation_summary_chain(
 
 
 def get_context_summary_chain():
-    model = get_chat_model(model_name=config.LLM_MODEL_NAME)
+    model = get_chat_model(model_name=config.azure.MODEL_NAME)
     prompt = ChatPromptTemplate.from_messages(
         [
             ("human", CONTEXT_SUMMARY_PROMPT.prompt),

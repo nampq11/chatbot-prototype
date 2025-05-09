@@ -53,7 +53,7 @@ async def summarize_conversation_node(
 
     delete_messages = [
         RemoveMessage(id=m.id)
-        for m in state["messages"][: -config.TOTAL_MESSAGES_AFTER_SUMMARY]
+        for m in state["messages"][: -config.message.TOTAL_MESSAGES_AFTER_SUMMARY]
     ]
     return {"summary": response.content, "messages": delete_messages}
 

@@ -1,5 +1,6 @@
 import os
 import uuid
+from langchain.globals import set_verbose
 from typing import Any, AsyncGenerator, Union
 from langchain_core.messages import AIMessage, AIMessage, HumanMessage, AIMessageChunk
 from langgraph.checkpoint.mongodb import AsyncMongoDBSaver
@@ -15,6 +16,7 @@ from src.app.agent.workflow.state import BookingCareAgentState
 from src.config import Config
 
 config = Config()
+set_verbose(True)
 
 async def get_response(
     messages: str | list[str] | list[dict[str, Any]],
@@ -26,38 +28,43 @@ async def get_response(
     new_thread: bool = False,
 ) -> tuple[str, BookingCareAgentState]:
     graph_builder = create_workflow_graph()
-
-    try:
-        async with AsyncMongoDBSaver.from_conn_string(
-            conn_string=config.MONGO_URI,
-            db_name=config.MONGO_DB_NAME,
-            checkpoint_collection_name=config.MONGO_STATE_CHECKPOINT_COLLECTION,
-            writes_collection_name=config.MONGO_STATE_WRITES_COLLECTION,
-        ) as checkpointer:
-            graph = graph_builder.compile(checkpointer=checkpointer)
-            opik_tracer = OpikTracer(graph=graph.get_graph(xray=True))
+    
+    # Initialize MongoDB checkpoint saver
+    checkpoint_saver = AsyncMongoDBSaver(
+        conn_string=config.mongo.URI,
+        db_name=config.mongo.DB_NAME,
+        checkpoint_collection_name=config.mongo.STATE_CHECKPOINT_COLLECTION,
+        writes_collection_name=config.mongo.STATE_WRITES_COLLECTION,
+    )
+    
+    # Create a unique run ID for this conversation
+    run_id = str(uuid.uuid4())
+    
+    # Initialize the graph with the checkpoint saver
+    graph = graph_builder.build(
+        checkpoint_saver=checkpoint_saver,
+        run_id=run_id
+    )
+    
+    # Create initial state
+    state = BookingCareAgentState(
+        messages=messages,
+        bookingcare_id=bookingcare_id,
+        bookingcare_name=bookingcare_name,
+        bookingcare_perspective=bookingcare_perspective,
+        bookingcare_style=bookingcare_style,
+        bookingcare_context=bookingcare_context,
+        new_thread=new_thread
+    )
+    
+    # Run the graph
+    async for event in graph.astream(state):
+        if isinstance(event, AIMessageChunk):
+            yield event.content
             
-            thread_id = (
-                bookingcare_id if not new_thread else f"{bookingcare_id}-{uuid.uuid4()}"
-            )
-            graph_config = {
-                "configurable": {"thread_id": thread_id},
-                "callbacks": [opik_tracer],
-            }
-            output_state = await graph.ainvoke(
-                input={
-                    "messages": __format_messages(messages),
-                    "bookingcare_name": bookingcare_name,
-                    "bookingcare_perspective": bookingcare_perspective,
-                    "bookingcare_style": bookingcare_style,
-                    "bookingcare_context": bookingcare_context,
-                },
-                config=graph_config,
-            )
-        last_message = output_state["messages"][-1]
-        return last_message.content, BookingCareAgentState(**output_state, thread_id=thread_id)
-    except Exception as e:
-        raise RuntimeError(f"Error running conversation workflow: {str(e)}") from e
+    # Get the final state
+    final_state = await graph.aget_state()
+    return final_state
 
 async def get_streaming_response(
     messages: str | list[str] | list[dict[str, Any]],
@@ -96,7 +103,7 @@ async def get_streaming_response(
                     "bookingcare_context": bookingcare_context,
                 },
                 config=graph_config,
-                stream_mode="messages"
+                stream_mode="messages",
             ):
                 if chunk[1]["langgraph_node"] == "conversation_node" and isinstance(
                     chunk[0], AIMessageChunk

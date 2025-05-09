@@ -9,9 +9,9 @@ from src.config import Config
 config = Config()
 
 def configure() -> None:
-    if config.COMET_API_KEY and config.COMET_PROJECT:
+    if config.comet.API_KEY and config.comet.PROJECT:
         try:
-            client = OpikConfigurator(api_key=config.COMET_API_KEY)
+            client = OpikConfigurator(api_key=config.comet.API_KEY)
             default_workspace = client._get_default_workspace()
         except Exception:
             logger.warning(
@@ -19,11 +19,11 @@ def configure() -> None:
             )
             default_workspace = None
 
-        os.environ["OPIK_PROJECT_NAME"] = config.COMET_PROJECT
+        os.environ["OPIK_PROJECT_NAME"] = config.comet.PROJECT
 
         try:
             opik.configure(
-                api_key=config.COMET_API_KEY,
+                api_key=config.comet.API_KEY,
                 workspace=default_workspace,
                 use_local=False,
                 force=True,

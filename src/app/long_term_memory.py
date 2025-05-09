@@ -17,19 +17,18 @@ class LongTermMemoryCreator:
     @classmethod
     def build_from_settings(cls) -> "LongTermMemoryCreator":
         retriever = get_retriever(
-            embedding_model_id=config.RAG_TEXT_EMBEDDING_MODEL_ID,
-            k=config.RAG_TOP_K,
-            device=config.RAG_DEVICE,
+            embedding_model_id=config.rag.TEXT_EMBEDDING_MODEL_ID,
+            k=config.rag.TOP_K,
+            device=config.rag.DEVICE,
         )
-        splitter = get_splitter(chunk_size=config.RAG_CHUNK_SIZE)
+        splitter = get_splitter(chunk_size=config.rag.CHUNK_SIZE)
 
         return cls(retriever=retriever, splitter=splitter)
     
     def __call__(self) -> None:
-
         with MongoClientWrapper(
             model=Document,
-            collection_name=config.MONGO_LONG_TERM_MEMORY_COLLECTION
+            collection_name=config.mongo.LONG_TERM_MEMORY_COLLECTION
         ) as client:
             client.clear_collection()
         
@@ -41,9 +40,9 @@ class LongTermMemoryRetriever:
     @classmethod
     def build_from_settings(cls) -> "LongTermMemoryRetriever":
         retriever = get_retriever(
-            embedding_model_id=config.RAG_TEXT_EMBEDDING_MODEL_ID,
-            k=config.RAG_TOP_K,
-            device=config.RAG_DEVICE,
+            embedding_model_id=config.rag.TEXT_EMBEDDING_MODEL_ID,
+            k=config.rag.TOP_K,
+            device=config.rag.DEVICE,
         )
         return cls(retriever=retriever)
 
