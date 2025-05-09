@@ -31,7 +31,7 @@ class UIManager:
         
         with col2:
             if st.button("Xóa tất cả", key="remove_all", use_container_width=True, type="secondary"):
-                ConversationManager.clear_all_conversations()
+                asyncio.run(ConversationManager.clear_all_conversations())
                 st.rerun()
         
         st.sidebar.markdown(
@@ -267,17 +267,16 @@ class UIManager:
         first_chunk = True
         domain = factory.get_domain(domain_id)
         try:
-            # get last human message
-            humman_message = messages[-1]
-            async for chunk in get_streaming_response(
-                messages=humman_message,
+            async for stream_mode, chunk in get_streaming_response(
+                messages=messages,
                 bookingcare_id=domain_id,
                 bookingcare_name=domain.name,
                 bookingcare_perspective=domain.perspective,
                 bookingcare_style=domain.style,
                 bookingcare_context="",
             ):
-                full_response += chunk
+                if stream_mode == "messages":
+                    full_response += chunk
                 
                 # Update the placeholder with the growing response
                 with response_placeholder.container():

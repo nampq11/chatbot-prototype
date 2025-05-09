@@ -7,23 +7,23 @@ settings = Config()
 
 async def reset_conversation_state() -> dict:
     try:
-        client = MongoClient(settings.MONGO_URI)
-        db = client[settings.MONGO_DB_NAME]
+        client = MongoClient(settings.mongo.URI)
+        db = client[settings.mongo.DB_NAME]
 
         collections_deleted = []
 
-        if settings.MONGO_STATE_CHECKPOINT_COLLECTION in db.list_collection_names():
-            db.drop_collection(settings.MONGO_STATE_CHECKPOINT_COLLECTION)
-            collections_deleted.append(settings.MONGO_STATE_CHECKPOINT_COLLECTION)
+        if settings.mongo.STATE_CHECKPOINT_COLLECTION in db.list_collection_names():
+            db.drop_collection(settings.mongo.STATE_CHECKPOINT_COLLECTION)
+            collections_deleted.append(settings.mongo.STATE_CHECKPOINT_COLLECTION)
             logger.info(
-                f"Deleted collection: {settings.MONGO_STATE_CHECKPOINT_COLLECTION}"
+                f"Deleted collection: {settings.mongo.STATE_CHECKPOINT_COLLECTION}"
             )
         
-        if settings.MONGO_STATE_WRITES_COLLECTION in db.list_collection_names():
-            db.drop_collection(settings.MONGO_STATE_WRITES_COLLECTION)
-            collections_deleted.append(settings.MONGO_STATE_WRITES_COLLECTION)
+        if settings.mongo.STATE_WRITES_COLLECTION in db.list_collection_names():
+            db.drop_collection(settings.mongo.STATE_WRITES_COLLECTION)
+            collections_deleted.append(settings.mongo.STATE_WRITES_COLLECTION)
             logger.info(
-                f"Deleted collection: {settings.MONGO_STATE_WRITES_COLLECTION}"
+                f"Deleted collection: {settings.mongo.STATE_WRITES_COLLECTION}"
             )
             
         client.close()

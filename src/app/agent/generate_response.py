@@ -1,6 +1,7 @@
 import os
 import uuid
 from langchain.globals import set_verbose
+from loguru import logger
 from typing import Any, AsyncGenerator, Union
 from langchain_core.messages import AIMessage, AIMessage, HumanMessage, AIMessageChunk
 from langgraph.checkpoint.mongodb import AsyncMongoDBSaver
@@ -26,7 +27,7 @@ async def get_response(
     bookingcare_style: str,
     bookingcare_context: str,
     new_thread: bool = False,
-) -> tuple[str, BookingCareAgentState]:
+) -> AsyncGenerator[str, None]:
     graph_builder = create_workflow_graph()
     
     # Initialize MongoDB checkpoint saver
@@ -64,7 +65,7 @@ async def get_response(
             
     # Get the final state
     final_state = await graph.aget_state()
-    return final_state
+    yield final_state
 
 async def get_streaming_response(
     messages: str | list[str] | list[dict[str, Any]],
@@ -79,10 +80,10 @@ async def get_streaming_response(
 
     try:
         async with AsyncMongoDBSaver.from_conn_string(
-            conn_string=config.MONGO_URI,
-            db_name=config.MONGO_DB_NAME,
-            checkpoint_collection_name=config.MONGO_STATE_CHECKPOINT_COLLECTION,
-            writes_collection_name=config.MONGO_STATE_WRITES_COLLECTION,
+            conn_string=config.mongo.URI,
+            db_name=config.mongo.DB_NAME,
+            checkpoint_collection_name=config.mongo.STATE_CHECKPOINT_COLLECTION,
+            writes_collection_name=config.mongo.STATE_WRITES_COLLECTION,
         ) as checkpointer:
             graph = graph_builder.compile(checkpointer=checkpointer)
             opik_tracer = OpikTracer(graph=graph.get_graph(xray=True))
@@ -94,7 +95,7 @@ async def get_streaming_response(
                 "configurable": {"thread_id": thread_id},
                 "callbacks": [opik_tracer],
             }
-            async for chunk in graph.astream(
+            async for stream_mode, chunk in graph.astream(
                 input={
                     "messages": __format_messages(messages),
                     "bookingcare_name": bookingcare_name,
@@ -103,12 +104,23 @@ async def get_streaming_response(
                     "bookingcare_context": bookingcare_context,
                 },
                 config=graph_config,
-                stream_mode="messages",
+                stream_mode=["messages", "updates"],
             ):
-                if chunk[1]["langgraph_node"] == "conversation_node" and isinstance(
-                    chunk[0], AIMessageChunk
-                ):
-                    yield chunk[0].content
+                logger.info(f"Stream mode: {stream_mode}")
+                logger.info(f"Chunk: {chunk}")
+                # chunk is a tuple of (message, metadata)
+                if stream_mode == "messages":
+                    message, metadata = chunk
+                    if metadata["langgraph_node"] == "conversation_node" and isinstance(
+                        message, AIMessageChunk
+                    ):
+                        yield stream_mode, message.content
+
+                elif stream_mode == "updates":
+                    yield stream_mode, chunk
+
+        # final_state = await graph.aget_state()
+        # yield final_state
                     
     except Exception as e:
         raise RuntimeError(f"Error running conversation workflow: {str(e)}") from e

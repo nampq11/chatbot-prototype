@@ -74,7 +74,7 @@ SUMMARY_PROMPT = Prompt(
     prompt=__SUMMARY_PROMPT,
 )
 
-__CONTEXT_SUMMARY_PROMPT = """Your task is to summarise the following information into less than 50 words. Just return the summary, don't include any other text:
+__CONTEXT_SUMMARY_PROMPT = """Your task is to summarise the following information about {{entity_name}}. Just return the summary, don't include any other text:
 
 {{context}}"""
 

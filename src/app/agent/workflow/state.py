@@ -1,10 +1,12 @@
 from langgraph.graph import MessagesState
+from typing import Dict, Any, List
 
 class BookingCareAgentState(MessagesState):
     bookingcare_context: str
     bookingcare_name: str
     bookingcare_perspective: str
     bookingcare_style: str
+    metadata: List[Dict[str, Any]] | None = None
     summary: str
 
 def state_to_str(state: BookingCareAgentState) -> str:

@@ -5,9 +5,7 @@ config = Config()
 
 def get_clinic_retriever():
     return get_retriever(
-        embedding_model_id=config.rag.TEXT_EMBEDDING_MODEL_ID,
         k=config.rag.TOP_K,
-        device=config.rag.DEVICE,
         namespace=f"{config.mongo.DB_NAME}.{config.mongo.COSMETIC_SURGEON_COLLECTION}",
         text_key="text",
         search_index_name=config.mongo.COSMETIC_SURGEON_SEARCH_INDEX_NAME,

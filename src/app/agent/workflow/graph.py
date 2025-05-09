@@ -9,7 +9,7 @@ from src.app.agent.workflow.nodes import (
     conversation_node,
     summarize_conversation_node,
     summarize_context_node,
-    retriever_node,
+    retriever_node_with_metadata,
     connector_node,
 )
 
@@ -21,7 +21,7 @@ def create_workflow_graph():
 
     # Add all nodes
     graph_builder.add_node("conversation_node", conversation_node)
-    graph_builder.add_node("retriever_context", retriever_node)
+    graph_builder.add_node("retriever_context", retriever_node_with_metadata)
     graph_builder.add_node("summarize_conversation_node", summarize_conversation_node)
     graph_builder.add_node("summarize_context_node", summarize_context_node)
     graph_builder.add_node("connector_node", connector_node)
