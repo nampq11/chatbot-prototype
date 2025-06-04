@@ -1,10 +1,10 @@
 import time
 import uuid
 from collections import OrderedDict
-from typing import Dict, List, Optional, TypedDict, Union
+from typing import List, Optional, TypedDict
 import streamlit as st
 
-from src.app.agent.reset_conversation import reset_conversation_state
+from src.services.api_service import api_service
 
 class Message(TypedDict):
     """Type definition for a chat message."""
@@ -35,12 +35,12 @@ class ConversationManager:
                 "messages": [],
                 "created_at": time.time()
             }
-            await reset_conversation_state()
+            await api_service.reset_memory()
 
         if "messages" not in st.session_state:
             current_id = st.session_state["current_conversation_id"]
             st.session_state["messages"] = st.session_state["conversation_history"][current_id]["messages"]
-            await reset_conversation_state()
+            await api_service.reset_memory()
 
     @staticmethod
     def _create_conversation(title: str = "Cuộc trò chuyện mới") -> tuple[str, Conversation]:
@@ -110,7 +110,7 @@ class ConversationManager:
         st.session_state["conversation_history"] = OrderedDict([(new_id, conversation)])
         st.session_state["current_conversation_id"] = new_id
         st.session_state["messages"] = conversation["messages"]
-        await reset_conversation_state()
+        await api_service.reset_memory()
 
     @staticmethod
     def set_current_conversation(conversation_id: str) -> None:
