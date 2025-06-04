@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "datasketch>=1.6.5",
     "fastapi[standard]>=0.115.12",
     "langchain-core>=0.3.59",
     "langchain-huggingface>=0.2.0",
@@ -15,4 +16,14 @@ dependencies = [
     "loguru>=0.7.3",
     "opik>=1.7.18",
     "sentence-transformers>=4.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "gliner>=0.2.19",
+    "ipykernel>=6.29.5",
+    "markdownify>=1.1.0",
+    "ollama>=0.4.8",
+    "pandas>=2.2.3",
+    "together>=1.5.8",
 ]

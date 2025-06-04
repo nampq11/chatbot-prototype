@@ -1,4 +1,4 @@
-from src.app.agent.workflow.tools.base import config, create_retriever_tool, get_retriever
+from src.app.agent.workflow.tools.base import create_retriever_tool, get_retriever
 from src.config import settings
 
 retriever_memory = get_retriever(

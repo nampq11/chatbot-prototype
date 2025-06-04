@@ -1,4 +1,6 @@
 from contextlib import asynccontextmanager
+import sys
+import os
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -45,7 +47,7 @@ async def chat(chat_message: ChatMessage):
     try:
         domain_factory = DomainFactory()
         domain = domain_factory.get_domain(chat_message.domain_id)
-        response, _ = get_response(
+        response, _ = await get_response(
             messages=chat_message.message,
             bookingcare_id=domain.id,
             bookingcare_name=domain.name,
@@ -125,4 +127,4 @@ async def reset_conversation():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
