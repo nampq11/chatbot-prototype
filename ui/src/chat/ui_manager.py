@@ -11,7 +11,7 @@ class UIManager:
     @staticmethod
     def apply_custom_styles():
         """Apply custom font styling for the entire app."""
-        load_css("assets/style.css")
+        load_css("ui/assets/style.css")
         
     @staticmethod
     def render_sidebar():
@@ -83,7 +83,7 @@ class UIManager:
         """Read the SVG logo file and return its base64-encoded content."""
         import base64
         try:
-            with open("assets/bookingcare_logo.svg", "rb") as f:
+            with open("ui/assets/bookingcare_logo.svg", "rb") as f:
                 return base64.b64encode(f.read()).decode("utf-8")
         except Exception as e:
             st.error(f"Error loading logo: {str(e)}")
